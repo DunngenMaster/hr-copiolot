@@ -1,0 +1,22 @@
+# Node / Vite
+node_modules/
+dist/
+*.log
+
+# Python / FastAPI
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+
+# App artifacts
+backend/data/
+*.sqlite3
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+.json

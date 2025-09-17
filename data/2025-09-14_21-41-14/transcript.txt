@@ -1,0 +1,43 @@
+hey everyone ashu here yesterday I cleaned up some of the data pipeline jobs and today I’m going to work on the fraud detection model still waiting on the logs from dave  
+
+next is dave give your update yeah thanks so yesterday I was finishing the log collector service today I’ll sync with ashu about integrating those logs also need review from priya  
+
+this is priya yesterday I closed the UI bug for login flow today I’ll pair with ananya on the dashboard redesign still blocked by george for API endpoints  
+
+hi it’s ananya I spent time yesterday fixing some CSS issues and prepping dashboard wireframes today I’m with priya on redesign also waiting on george like she said  
+
+george here yesterday I was finishing API endpoints for reporting today I’ll finalize deployment scripts I’ll check with charlie about database migrations  
+
+charlie speaking yesterday I worked on DB migrations with bob today continuing that and also reviewing george’s endpoints waiting on diana for staging slot  
+
+diana here I patched staging environment last night today I’ll open up a slot for charlie and george around afternoon also I need input from hannah on infra configs  
+
+hey this is hannah I was working with ivan yesterday on analytics ingestion jobs today I’ll finish schema validation blocked on cloud permissions still ivan said he’s fixing  
+
+ivan here yep fixing IAM roles today yesterday cleaned monitoring alerts hopefully hannah can test after lunch  
+
+hello this is ethan wrapped dashboard filters yesterday today fixing pagination bug also need design review from fiona  
+
+fiona here reviewing ethan’s dashboard this morning starting reporting module mockups need requirements from george before end of day  
+
+hi everyone george already mentioned I shared schema draft with hannah also will send to fiona for reporting module requirements  
+
+julia joining yesterday I wrapped onboarding flow tests today I’ll pair with karan on mobile build pipeline  
+
+karan here yesterday debugging android build issues today working with julia on pipeline also syncing with meera for ios updates  
+
+meera speaking yesterday ios build went fine today continuing with notifications module need help from karan for api tokens  
+
+arjun here I finished writing unit tests yesterday today starting integration with payments service need support from neha for test data  
+
+neha speaking I was cleaning data yesterday today helping arjun with test data and syncing with rahul on analytics queries  
+
+rahul here yesterday analytics queries were optimized today pairing with neha also will connect with ashu later about fraud model inputs  
+
+this is sam I fixed docker build yesterday today adding monitoring scripts and will review ivan’s IAM changes  
+
+hello I’m tanya yesterday wrapped up slack bot integration today adding reminder feature need charlie to review my PR  
+
+vikram here worked on email service yesterday today fixing SMTP bug waiting for sam to review  
+
+end of updates from everyone

@@ -1,78 +1,37 @@
+// src/components/OrionPanel.tsx
 import { useMemo, useState } from "react"
 import StarGraph from "./StarGraph"
-import type { GraphT, EdgeTaskT } from "../lib/types"
-import { mergeReciprocalEdges } from "../lib/normalize"
+import type { GraphT } from "../lib/types"
+import { safeGraphFromAny, mergeReciprocalEdges } from "../lib/normalize"
 
-type NodeDetails = { partners: string[]; tasks: EdgeTaskT[] }
-
-export default function OrionPanel({ data }: { data: GraphT | undefined }) {
-  const [q, setQ] = useState("")
+export default function OrionPanel({ data }: { data: GraphT | any }) {
   const [focusId, setFocusId] = useState<string | null>(null)
 
-  const safe = useMemo<GraphT>(
-    () => ({ nodes: data?.nodes ?? [], edges: data?.edges ?? [] }),
-    [data]
-  )
+  // ⬇️ Make ANY shape safe
+  const safe = useMemo<GraphT>(() => safeGraphFromAny(data || {}), [data])
+
+  // ⬇️ Optional: collapse A↔B into one edge
   const merged = useMemo(() => mergeReciprocalEdges(safe), [safe])
 
-  // Build quick details per person from edges
-  const nodeDetails = useMemo<Record<string, NodeDetails>>(() => {
-    const base: Record<string, NodeDetails> = {}
-    for (const n of merged.nodes) base[n.id] = { partners: [], tasks: [] }
-    for (const e of merged.edges) {
-      base[e.source]?.partners.push(e.target)
-      base[e.target]?.partners.push(e.source)
-      if (e.tasks?.length) {
-        base[e.source]?.tasks.push(...e.tasks)
-        base[e.target]?.tasks.push(...e.tasks)
-      }
-    }
-    // dedupe partners
-    for (const k of Object.keys(base)) {
-      base[k].partners = Array.from(new Set(base[k].partners))
-    }
-    return base
-  }, [merged])
-
-  const jump = () => {
-    const hit =
-      merged.nodes.find(n => n.id.toLowerCase() === q.toLowerCase() || n.label.toLowerCase() === q.toLowerCase()) ||
-      merged.nodes.find(n => n.label.toLowerCase().includes(q.toLowerCase()))
-    if (hit) setFocusId(hit.id)
-  }
+  const hasGraph = merged.nodes.length > 0 && merged.edges.length > 0
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-3 px-1">
-        <div className="text-slate-300/80 text-sm">Orion — collaboration map</div>
-        <div className="flex items-center gap-2">
-          <input
-            placeholder="Search person…"
-            value={q}
-            onChange={e=>setQ(e.target.value)}
-            onKeyDown={e=>e.key==="Enter" && jump()}
-            className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:border-cyan-400/40"
-          />
-          <button onClick={jump} className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/40 text-sm">
-            Go
-          </button>
-        </div>
-      </div>
+      <div className="text-slate-300/80 text-sm mb-2">Orion — collaboration map</div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-2">
-        <StarGraph
-          data={merged}
-          focusedId={focusId}
-          nodeDetails={nodeDetails}
-          onSelectNode={(id)=>setFocusId(id)}
-        />
+        {hasGraph ? (
+          <StarGraph
+            data={merged}
+            focusedId={focusId}
+            onSelectNode={(id)=>setFocusId(id)}
+          />
+        ) : (
+          <div className="p-6 text-slate-400">
+            No connections yet — upload a transcript (or the graph data was invalid and got filtered).
+          </div>
+        )}
       </div>
-
-      {!merged.nodes.length && (
-        <div className="mt-4 text-slate-400 text-sm">
-          No connections yet — upload a transcript.
-        </div>
-      )}
     </div>
   )
 }

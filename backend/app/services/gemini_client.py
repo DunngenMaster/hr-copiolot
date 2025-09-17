@@ -4,7 +4,7 @@ from app.models.schemas import StarConnect, SummaryBlock, TaskList, Node, Edge, 
 
 log = logging.getLogger(__name__)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_API_KEY = "AIzaSyD5EI3Cevh72GtfrkSVD4O9dD9KGoHYLoU"
 MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
 

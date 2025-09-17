@@ -1,28 +1,39 @@
-export async function uploadTranscript(input: File | string){
-  const form=new FormData()
-  if(typeof input==="string") form.append("transcript",input)
-  else form.append("file",input)
-  const res=await fetch("http://localhost:8000/api/upload",{method:"POST",body:form})
-  if(!res.ok) throw new Error("upload failed")
-  return res.json()
+// src/lib/api.ts
+export type UploadResponse = {
+  date_dir: string
+  star_connect: { nodes: any[]; edges: any[] }
+  summary: { bullets: string[] }
+  tasks: { items: any[] }
 }
 
-export async function askGemini(question: string, date = "latest", scope: "auto" | "summary" | "tasks" | "transcript" | "graph" = "auto") {
-  const res = await fetch("http://localhost:8000/api/ask", {
+export async function uploadTranscript(file: File): Promise<UploadResponse> {
+  const fd = new FormData()
+  fd.append("file", file)
+
+  const res = await fetch("/api/upload", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question, date, scope, top_k: 4 }),
+    body: fd,
   })
-  if (!res.ok) throw new Error("ask failed")
-  return res.json()
-}
 
-export async function fetchSnippet(date: string, query: string, windowChars = 320) {
-  const url = new URL("/api/snippet", window.location.origin)
-  url.searchParams.set("date", date)
-  url.searchParams.set("query", query.slice(0, 300))
-  url.searchParams.set("window_chars", String(windowChars))
-  const res = await fetch(url.toString())
-  if (!res.ok) throw new Error("snippet failed")
-  return res.json()
+  if (!res.ok) {
+    const txt = await res.text()
+    throw new Error(`Upload failed (${res.status}): ${txt}`)
+  }
+
+  // Ensure JSON + shape
+  const data = await res.json()
+  const parsed: UploadResponse = {
+    date_dir: data.date_dir ?? null,
+    star_connect: typeof data.star_connect === "string" ? JSON.parse(data.star_connect) : (data.star_connect ?? { nodes: [], edges: [] }),
+    summary: typeof data.summary === "string" ? JSON.parse(data.summary) : (data.summary ?? { bullets: [] }),
+    tasks: typeof data.tasks === "string" ? JSON.parse(data.tasks) : (data.tasks ?? { items: [] }),
+  }
+
+  // Hard guards so Orion never renders blank due to bad shapes
+  if (!Array.isArray(parsed.star_connect?.nodes)) parsed.star_connect.nodes = []
+  if (!Array.isArray(parsed.star_connect?.edges)) parsed.star_connect.edges = []
+  if (!Array.isArray(parsed.summary?.bullets)) parsed.summary.bullets = []
+  if (!Array.isArray(parsed.tasks?.items)) parsed.tasks.items = []
+
+  return parsed
 }
